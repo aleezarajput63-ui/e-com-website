@@ -33,6 +33,10 @@ function Categories() {
 
   const cancelform = () => {
     setshowform(false)
+    // Reset inputs when canceling
+    setcatname("");
+    setdescrip("");
+    setupdate(false);
   }
 
 
@@ -51,6 +55,7 @@ function Categories() {
       console.log(data);
       setcatname("");
       setdescrip("");
+      setshowform(false);
       setRefresh(!refresh);
     }
   };
@@ -134,7 +139,8 @@ function Categories() {
             </h2>
 
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            {/* grid-cols-1 ensure karega ke mobile par input boxes ek ke niche ek aayein */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 
               <input
                 type="text"
@@ -160,8 +166,8 @@ function Categories() {
             </div>
 
 
-            {/* Buttons */}
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            {/* Buttons Layout - Mobile par side-by-side flex row hi rahega short buttons ke liye */}
+            <div className="mt-5 flex flex-row gap-3">
 
               {
                 update === true
@@ -220,8 +226,8 @@ function Categories() {
       }
 
 
-      {/* Categories List */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Categories List - grid-cols-1 add kiya hai taake mobile screen par properly adjust ho */}
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
         {
           categoriesList.map((items) => {
@@ -250,8 +256,8 @@ function Categories() {
                 </p>
 
 
-                {/* Action Buttons */}
-                <div className="mt-5 flex flex-col gap-3 border-t border-gray-100 pt-4 sm:flex-row">
+                {/* Action Buttons - flex-row layout for horizontal split on mobile */}
+                <div className="mt-5 flex flex-row gap-3 border-t border-gray-100 pt-4">
 
                   <button
                     onClick={() => {
@@ -261,7 +267,7 @@ function Categories() {
                         items.description
                       )
                     }}
-                    className="flex-1 rounded-lg bg-orange-50 px-4 py-2.5 text-sm font-semibold text-orange-600 transition hover:bg-orange-100"
+                    className="flex-1 text-center rounded-lg bg-orange-50 px-4 py-2.5 text-sm font-semibold text-orange-600 transition hover:bg-orange-100"
                   >
                     Edit
                   </button>
@@ -271,7 +277,7 @@ function Categories() {
                     onClick={() => {
                       del(items.id)
                     }}
-                    className="flex-1 rounded-lg bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+                    className="flex-1 text-center rounded-lg bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
                   >
                     Delete
                   </button>

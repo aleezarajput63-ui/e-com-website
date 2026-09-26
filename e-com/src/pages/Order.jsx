@@ -7,6 +7,7 @@ function Order() {
   useEffect(() => {
     const fetchOrder = async () => {
       const { data, error } = await Supabase.from("Order").select("*");
+
       if (error) {
         console.log(error);
       } else {
@@ -14,12 +15,15 @@ function Order() {
         setorderdata(data);
       }
     }
+
     fetchOrder();
   }, [])
 
 
   const del = async (id) => {
-    const { data, error } = await Supabase.from("Order").delete()
+    const { data, error } = await Supabase
+      .from("Order")
+      .delete()
       .eq("id", id);
 
     if (error) {
@@ -32,14 +36,19 @@ function Order() {
 
 
   const updateStatus = async (id, newStatus) => {
-    const { data, error } = await Supabase.from("Order").update({
-      status: newStatus,
-    }).eq("id", id).select();
+    const { data, error } = await Supabase
+      .from("Order")
+      .update({
+        status: newStatus,
+      })
+      .eq("id", id)
+      .select();
 
     if (error) {
       console.log(error);
     } else {
       console.log(data);
+
       setorderdata(prev =>
         prev.map(order =>
           order.id === id
@@ -52,99 +61,191 @@ function Order() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen w-full overflow-x-hidden bg-gray-50 p-3 sm:p-5 md:p-6">
 
-      <h1 className="mb-6 text-2xl font-bold text-gray-800 sm:mb-8 sm:text-3xl">
-        Orders
-      </h1>
+      {/* Header */}
+      <div className="mb-5 sm:mb-6">
 
-      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+        <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl">
+          Orders
+        </h1>
 
-        <table className="w-full min-w-[800px] text-left">
+        <p className="mt-1 text-xs text-gray-500 sm:text-sm">
+          Manage your customer orders
+        </p>
 
-          <thead className="bg-orange-500 text-white">
-            <tr>
-              <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                Product
-              </th>
+      </div>
 
-              <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                Price
-              </th>
 
-              <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                Quantity
-              </th>
+      {/* Order Table Card */}
+      <div className="w-full max-w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
 
-              <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                Total
-              </th>
+        {/* Table Header */}
+        <div className="flex items-center justify-between border-b border-gray-100 px-4 py-4 sm:px-5">
 
-              <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                Status
-              </th>
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">
+              All Orders
+            </h2>
 
-              <th className="px-4 py-3 text-sm sm:px-6 sm:py-4 sm:text-base">
-                Action
-              </th>
-            </tr>
-          </thead>
+            <p className="mt-1 text-xs text-gray-400">
+              {orderdata.length} Orders
+            </p>
+          </div>
 
-          <tbody>
-            {orderdata.map((Order) => {
-              return (
-                <tr
-                  key={Order.id}
-                  className="border-b border-gray-200 hover:bg-orange-50"
-                >
+        </div>
 
-                  <td className="px-4 py-3 font-semibold text-gray-800 sm:px-6 sm:py-4">
-                    {Order.productName}
-                  </td>
 
-                  <td className="px-4 py-3 text-gray-600 sm:px-6 sm:py-4">
-                    Rs. {Order.productPrice}
-                  </td>
+        {/* Only Table Scrolls */}
+        <div className="w-full max-w-full overflow-x-auto">
 
-                  <td className="px-4 py-3 text-gray-600 sm:px-6 sm:py-4">
-                    {Order.quantity}
-                  </td>
+          <table className="w-full min-w-[800px] text-left">
 
-                  <td className="px-4 py-3 font-semibold text-orange-500 sm:px-6 sm:py-4">
-                    Rs. {Order.totalPrice}
-                  </td>
+            <thead className="bg-orange-500 text-white">
 
-                  <td className="px-4 py-3 sm:px-6 sm:py-4">
-                    <select
-                      value={Order.status}
-                      onChange={(e) => {
-                        updateStatus(Order.id, e.target.value);
-                      }}
-                      className="cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm outline-none transition hover:border-orange-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Cancelled">Cancelled</option>
-                    </select>
-                  </td>
+              <tr>
 
-                  <td className="px-4 py-3 sm:px-6 sm:py-4">
-                    <button
-                      className="rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
-                      onClick={() => { del(Order.id) }}
-                    >
-                      Delete
-                    </button>
-                  </td>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
+                  Product
+                </th>
 
-                </tr>
-              );
-            })}
-          </tbody>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
+                  Price
+                </th>
 
-        </table>
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
+                  Quantity
+                </th>
+
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
+                  Total
+                </th>
+
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
+                  Status
+                </th>
+
+                <th className="whitespace-nowrap px-4 py-3 text-xs font-semibold sm:px-6 sm:py-4 sm:text-sm">
+                  Action
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+
+              {orderdata.map((Order) => {
+
+                return (
+
+                  <tr
+                    key={Order.id}
+                    className="border-b border-gray-100 transition hover:bg-orange-50"
+                  >
+
+                    {/* Product */}
+                    <td className="px-4 py-4 sm:px-6">
+
+                      <div className="min-w-[150px] whitespace-nowrap text-sm font-semibold text-gray-800">
+                        {Order.productName}
+                      </div>
+
+                    </td>
+
+
+                    {/* Price */}
+                    <td className="px-4 py-4 sm:px-6">
+
+                      <span className="whitespace-nowrap text-sm text-gray-600">
+                        Rs. {Order.productPrice}
+                      </span>
+
+                    </td>
+
+
+                    {/* Quantity */}
+                    <td className="px-4 py-4 sm:px-6">
+
+                      <span className="text-sm text-gray-600">
+                        {Order.quantity}
+                      </span>
+
+                    </td>
+
+
+                    {/* Total */}
+                    <td className="px-4 py-4 sm:px-6">
+
+                      <span className="whitespace-nowrap text-sm font-bold text-orange-500">
+                        Rs. {Order.totalPrice}
+                      </span>
+
+                    </td>
+
+
+                    {/* Status */}
+                    <td className="px-4 py-4 sm:px-6">
+
+                      <select
+                        value={Order.status}
+                        onChange={(e) => {
+                          updateStatus(Order.id, e.target.value);
+                        }}
+                        className="cursor-pointer rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-sm outline-none transition hover:border-orange-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 sm:text-sm"
+                      >
+
+                        <option value="Pending">
+                          Pending
+                        </option>
+
+                        <option value="Processing">
+                          Processing
+                        </option>
+
+                        <option value="Shipped">
+                          Shipped
+                        </option>
+
+                        <option value="Delivered">
+                          Delivered
+                        </option>
+
+                        <option value="Cancelled">
+                          Cancelled
+                        </option>
+
+                      </select>
+
+                    </td>
+
+
+                    {/* Delete */}
+                    <td className="px-4 py-4 sm:px-6">
+
+                      <button
+                        className="whitespace-nowrap rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-500 hover:text-white sm:text-sm"
+                        onClick={() => {
+                          del(Order.id)
+                        }}
+                      >
+                        Delete
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                );
+
+              })}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       </div>
 
